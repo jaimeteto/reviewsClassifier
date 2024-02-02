@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 """
 Created on Tue Jan 30 00:31:19 2024
 
@@ -10,8 +10,12 @@ import os
 import csv
 import re 
 import nltk
-from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+nltk.download('stopwords')
+nltk.download('punkt')
+
+
 
 
 
@@ -28,7 +32,7 @@ def read_csv_file(file_name):
         with open(csv_file_path, 'r', newline='', encoding='utf-8') as csvfile:
             csv_reader = csv.reader(csvfile, delimiter=',')
             
-            set(stopwords.words('english'))
+            stop_words = set(stopwords.words('english'))
 
             # Iterate through each row
             for idx, row in enumerate(csv_reader):
@@ -41,17 +45,19 @@ def read_csv_file(file_name):
                     text = ",".join(row[1:])  # Join remaining columns into a single text
 
                     #removing punctuation from text column
-                    text_with_no_punctuation = re.sub(r'[^\ws]', " ", text)
+                    text_with_no_ln = text.replace("\\n", "")
+
+                    text_with_no_punctutation = re.sub(r'[^\w\s]', ' ', text_with_no_ln)
                     
                     #tokenize each word
-                    word_tokens= word_tokenize(text_with_no_punctuation)
+                    word_tokens= word_tokenize(text_with_no_punctutation)
                     
                     #remove all stop words
                     text_with_no_stop_words = []
                     
                     for w in word_tokens:
-                            if w in stopwords:
-                                text_with_no_stop_words.append(w)
+                        if w not in stop_words and len(w)>1 and not w.isdigit():
+                            text_with_no_stop_words.append(w)
                     print(text_with_no_stop_words)
                     
                     
@@ -60,7 +66,7 @@ def read_csv_file(file_name):
                     
                     
                     print(f"Row {idx + 1} - First Value: {first_value}")
-                    print(text_with_no_punctuation)
+                    print(text_with_no_punctutation)
                     
        
 
